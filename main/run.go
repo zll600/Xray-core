@@ -49,15 +49,14 @@ func init() {
 }
 
 var (
-	configFiles cmdarg.Arg // "Config file for Xray.", the option is customed type, parse in main
+	configFiles cmdarg.Arg // "Config file for Xray.", the option is customized type, parsed in main
 	configDir   string
 	dump        = cmdRun.Flag.Bool("dump", false, "Dump merged config only, without launching Xray server.")
 	test        = cmdRun.Flag.Bool("test", false, "Test config file only, without launching Xray server.")
 	format      = cmdRun.Flag.String("format", "auto", "Format of input file.")
 
-	/* We have to do this here because Golang's Test will also need to parse flag, before
-	 * main func in this file is run.
-	 */
+	// We have to do this here because Golang's Test will also need to parse flag, before
+	// main func in this file is run.
 	_ = func() bool {
 		cmdRun.Flag.Var(&configFiles, "config", "Config path for Xray.")
 		cmdRun.Flag.Var(&configFiles, "c", "Short alias of -config")
@@ -93,21 +92,13 @@ func executeRun(cmd *base.Command, args []string) {
 	}
 	defer server.Close()
 
-	/*
-		conf.FileCache = nil
-		conf.IPCache = nil
-		conf.SiteCache = nil
-	*/
-
 	// Explicitly triggering GC to remove garbage from config loading.
 	runtime.GC()
 	debug.FreeOSMemory()
 
-	{
-		osSignals := make(chan os.Signal, 1)
-		signal.Notify(osSignals, os.Interrupt, syscall.SIGTERM)
-		<-osSignals
-	}
+	osSignals := make(chan os.Signal, 1)
+	signal.Notify(osSignals, os.Interrupt, syscall.SIGTERM)
+	<-osSignals
 }
 
 func dumpConfig() int {
@@ -214,8 +205,6 @@ func getConfigFormat() string {
 
 func startXray() (core.Server, error) {
 	configFiles := getConfigFilePath(true)
-
-	// config, err := core.LoadConfig(getConfigFormat(), configFiles[0], configFiles)
 
 	c, err := core.LoadConfig(getConfigFormat(), configFiles)
 	if err != nil {

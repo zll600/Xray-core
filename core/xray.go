@@ -32,7 +32,7 @@ func ServerType() interface{} {
 
 type resolution struct {
 	deps     []reflect.Type
-	callback interface{}
+	callback any
 }
 
 func getFeature(allFeatures []features.Feature, t reflect.Type) features.Feature {
@@ -48,7 +48,7 @@ func (r *resolution) callbackResolution(allFeatures []features.Feature) error {
 	callback := reflect.ValueOf(r.callback)
 	var input []reflect.Value
 	callbackType := callback.Type()
-	for i := 0; i < callbackType.NumIn(); i++ {
+	for i := range callbackType.NumIn() {
 		pt := callbackType.In(i)
 		for _, f := range allFeatures {
 			if reflect.TypeOf(f).AssignableTo(pt) {
@@ -149,14 +149,14 @@ func addOutboundHandlers(server *Instance, configs []*OutboundHandlerConfig) err
 
 // RequireFeatures is a helper function to require features from Instance in context.
 // See Instance.RequireFeatures for more information.
-func RequireFeatures(ctx context.Context, callback interface{}) error {
+func RequireFeatures(ctx context.Context, callback any) error {
 	v := MustFromContext(ctx)
 	return v.RequireFeatures(callback, false)
 }
 
-// OptionalFeatures is a helper function to aquire features from Instance in context.
+// OptionalFeatures is a helper function to acquire features from Instance in context.
 // See Instance.RequireFeatures for more information.
-func OptionalFeatures(ctx context.Context, callback interface{}) error {
+func OptionalFeatures(ctx context.Context, callback any) error {
 	v := MustFromContext(ctx)
 	return v.RequireFeatures(callback, true)
 }
@@ -276,15 +276,15 @@ func (s *Instance) Close() error {
 
 // RequireFeatures registers a callback, which will be called when all dependent features are registered.
 // The callback must be a func(). All its parameters must be features.Feature.
-func (s *Instance) RequireFeatures(callback interface{}, optional bool) error {
+func (s *Instance) RequireFeatures(callback any, optional bool) error {
 	callbackType := reflect.TypeOf(callback)
 	if callbackType.Kind() != reflect.Func {
 		panic("not a function")
 	}
 
 	var featureTypes []reflect.Type
-	for i := 0; i < callbackType.NumIn(); i++ {
-		featureTypes = append(featureTypes, reflect.PtrTo(callbackType.In(i)))
+	for i := range callbackType.NumIn() {
+		featureTypes = append(featureTypes, reflect.PointerTo(callbackType.In(i)))
 	}
 
 	r := resolution{
@@ -304,15 +304,15 @@ func (s *Instance) RequireFeatures(callback interface{}, optional bool) error {
 	if foundAll {
 		s.resolveLock.Unlock()
 		return r.callbackResolution(s.features)
-	} else {
-		if optional {
-			s.pendingOptionalResolutions = append(s.pendingOptionalResolutions, r)
-		} else {
-			s.pendingResolutions = append(s.pendingResolutions, r)
-		}
-		s.resolveLock.Unlock()
-		return nil
 	}
+
+	if optional {
+		s.pendingOptionalResolutions = append(s.pendingOptionalResolutions, r)
+	} else {
+		s.pendingResolutions = append(s.pendingResolutions, r)
+	}
+	s.resolveLock.Unlock()
+	return nil
 }
 
 // AddFeature registers a feature into current Instance.

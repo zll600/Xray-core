@@ -243,7 +243,7 @@ func (r *Route) GetRuleTag() string {
 }
 
 func init() {
-	common.Must(common.RegisterConfig((*Config)(nil), func(ctx context.Context, config interface{}) (interface{}, error) {
+	common.Must(common.RegisterConfig((*Config)(nil), func(ctx context.Context, config any) (any, error) {
 		r := new(Router)
 		if err := core.RequireFeatures(ctx, func(d dns.Client, ohm outbound.Manager, dispatcher routing.Dispatcher) error {
 			return r.Init(ctx, config.(*Config), d, ohm, dispatcher)

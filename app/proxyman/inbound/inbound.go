@@ -31,7 +31,7 @@ func New(ctx context.Context, config *proxyman.InboundConfig) (*Manager, error) 
 }
 
 // Type implements common.HasType.
-func (*Manager) Type() interface{} {
+func (*Manager) Type() any {
 	return inbound.ManagerType()
 }
 

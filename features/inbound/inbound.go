@@ -45,6 +45,6 @@ type Manager interface {
 // ManagerType returns the type of Manager interface. Can be used for implementing common.HasType.
 //
 // xray:api:stable
-func ManagerType() interface{} {
+func ManagerType() any {
 	return (*Manager)(nil)
 }

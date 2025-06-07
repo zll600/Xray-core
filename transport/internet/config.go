@@ -5,7 +5,7 @@ import (
 	"github.com/xtls/xray-core/common/serial"
 )
 
-type ConfigCreator func() interface{}
+type ConfigCreator func() any
 
 var (
 	globalTransportConfigCreatorCache = make(map[string]ConfigCreator)
@@ -38,7 +38,7 @@ func RegisterProtocolConfigCreator(name string, creator ConfigCreator) error {
 
 // Note: Each new transport needs to add init() func in transport/internet/xxx/config.go
 // Otherwise, it will cause #3244
-func CreateTransportConfig(name string) (interface{}, error) {
+func CreateTransportConfig(name string) (any, error) {
 	creator, ok := globalTransportConfigCreatorCache[name]
 	if !ok {
 		return nil, errors.New("unknown transport protocol: ", name)

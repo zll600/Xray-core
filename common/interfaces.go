@@ -50,7 +50,7 @@ type Runnable interface {
 type HasType interface {
 	// Type returns the type of the object.
 	// Usually it returns (*Type)(nil) of the object.
-	Type() interface{}
+	Type() any
 }
 
 // ChainedClosable is a Closable that consists of multiple Closable objects.
