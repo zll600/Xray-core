@@ -38,7 +38,7 @@ func (fkdns *Holder) GetFakeIPForDomain3(domain string, ipv4, ipv6 bool) []net.A
 	return []net.Address{}
 }
 
-func (*Holder) Type() interface{} {
+func (*Holder) Type() any {
 	return (*dns.FakeDNSEngine)(nil)
 }
 
@@ -185,7 +185,7 @@ func (h *HolderMulti) GetDomainFromFakeDNS(ip net.Address) string {
 	return ""
 }
 
-func (h *HolderMulti) Type() interface{} {
+func (h *HolderMulti) Type() any {
 	return (*dns.FakeDNSEngine)(nil)
 }
 

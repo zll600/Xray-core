@@ -154,7 +154,7 @@ func New(ctx context.Context, config *Config) (*DNS, error) {
 }
 
 // Type implements common.HasType.
-func (*DNS) Type() interface{} {
+func (*DNS) Type() any {
 	return dns.ClientType()
 }
 

@@ -124,7 +124,7 @@ func (d *DefaultDispatcher) Init(config *Config, om outbound.Manager, router rou
 }
 
 // Type implements common.HasType.
-func (*DefaultDispatcher) Type() interface{} {
+func (*DefaultDispatcher) Type() any {
 	return routing.DispatcherType()
 }
 

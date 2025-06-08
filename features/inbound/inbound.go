@@ -22,7 +22,7 @@ type Handler interface {
 	ProxySettings() *serial.TypedMessage
 
 	// Deprecated: Do not use in new code.
-	GetRandomInboundProxy() (interface{}, net.Port, int)
+	GetRandomInboundProxy() (any, net.Port, int)
 }
 
 // Manager is a feature that manages InboundHandlers.

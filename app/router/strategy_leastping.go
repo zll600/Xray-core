@@ -3,6 +3,8 @@ package router
 import (
 	"context"
 
+	"slices"
+
 	"github.com/xtls/xray-core/app/observatory"
 	"github.com/xtls/xray-core/common"
 	"github.com/xtls/xray-core/common/errors"
@@ -58,10 +60,5 @@ func (l *LeastPingStrategy) PickOutbound(strings []string) string {
 type outboundList []string
 
 func (o outboundList) contains(name string) bool {
-	for _, v := range o {
-		if v == name {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(o, name)
 }
